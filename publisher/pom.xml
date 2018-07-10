@@ -36,7 +36,7 @@
 
     <dependency>
       <groupId>eu.arrowhead</groupId>
-      <artifactId>client-common</artifactId>
+      <artifactId>arrowhead-client-common</artifactId>
     </dependency>
 
   </dependencies>
