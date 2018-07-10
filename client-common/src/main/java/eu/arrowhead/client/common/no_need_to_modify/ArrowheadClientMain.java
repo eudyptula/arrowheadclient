@@ -91,12 +91,12 @@ public abstract class ArrowheadClientMain {
   }
 
   protected void listenForInput() {
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      System.out.println("Received TERM signal, shutting down...");
+      shutdown();
+    }));
     if (daemon) {
-      System.out.println("In daemon mode, process will terminate for TERM signal...");
-      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        System.out.println("Received TERM signal, shutting down...");
-        shutdown();
-      }));
+      System.out.println("In daemon mode, process will only terminate for TERM signal...");
     } else {
       System.out.println("Type \"stop\" to shutdown " + clientType + " Server...");
       BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
