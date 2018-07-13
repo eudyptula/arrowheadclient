@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-public class ArrowheadProvider extends ArrowheadClientMain {
+public abstract class ArrowheadProvider extends ArrowheadClientMain {
     private final String srBaseUri;
     private ServiceRegistryEntry srEntry = null;
 
