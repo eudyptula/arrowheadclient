@@ -7,7 +7,7 @@
  *  national funding authorities from involved countries.
  */
 
-package eu.arrowhead.client.provider.easy;
+package eu.arrowhead.client.provider;
 
 import eu.arrowhead.client.common.can_be_modified.model.MeasurementEntry;
 import eu.arrowhead.client.common.can_be_modified.model.TemperatureReadout;

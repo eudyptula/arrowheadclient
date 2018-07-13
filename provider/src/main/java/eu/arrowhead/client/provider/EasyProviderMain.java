@@ -7,7 +7,7 @@
  *  national funding authorities from involved countries.
  */
 
-package eu.arrowhead.client.provider.easy;
+package eu.arrowhead.client.provider;
 
 import eu.arrowhead.client.common.no_need_to_modify.ArrowheadProps;
 import eu.arrowhead.client.common.no_need_to_modify.ArrowheadProvider;
