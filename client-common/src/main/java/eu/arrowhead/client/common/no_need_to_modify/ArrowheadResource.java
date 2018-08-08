@@ -13,6 +13,7 @@ import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 public abstract class ArrowheadResource {
     private final PublicKey authorizationKey;
@@ -38,8 +39,14 @@ public abstract class ArrowheadResource {
 
     protected <T> Response verifiedResponse(SecurityContext context, String token, String signature, T readout) {
         return context.isSecure() ?
-                verifyRequester(context, token, signature, readout) :
+                verifyRequester(context, token, signature, () -> readout) :
                 Response.status(200).entity(readout).build();
+    }
+
+    protected <T> Response verifiedResponse(SecurityContext context, String token, String signature, Supplier<T> onOk) {
+        return context.isSecure() ?
+                verifyRequester(context, token, signature, onOk) :
+                Response.status(200).entity(onOk).build();
     }
 
     /*
@@ -47,7 +54,7 @@ public abstract class ArrowheadResource {
       was created by the Authorization Core System with the provider public key. It also checks if the token expired or not, plus the token
       has to contain the same consumer name as the common name field of the client certificate.
      */
-    private <T> Response verifyRequester(SecurityContext context, String token, String signature, T responseEntity) {
+    private <T> Response verifyRequester(SecurityContext context, String token, String signature, Supplier<T> onOk) {
         try {
             String commonName = SecurityUtils.getCertCNFromSubject(context.getUserPrincipal().getName());
             String[] commonNameParts = commonName.split("\\.");
@@ -91,7 +98,7 @@ public abstract class ArrowheadResource {
 
             if (consumerName.equals(consumerTokenName)) {
                 if (endTime == 0L || (endTime > currentTime)) {
-                    return Response.status(200).entity(responseEntity).build();
+                    return Response.status(200).entity(onOk.get()).build();
                 }
                 ErrorMessage error = new ErrorMessage("Authorization token has expired", 401, ExceptionType.AUTH, Utility.class.toString());
                 return Response.status(401).entity(error).build();
