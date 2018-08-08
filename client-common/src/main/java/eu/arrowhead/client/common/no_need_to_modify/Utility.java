@@ -325,4 +325,29 @@ public final class Utility {
     }
   }
 
+  public static <T> T requestEntity(String method, String providerUrl, Object payload, Class<T> aClass) {
+    Response response = sendRequestThrow(method, providerUrl, payload);
+
+    T obj;
+    try {
+      obj = response.readEntity(aClass);
+    } catch (RuntimeException e) {
+      System.out.println("Provider did not send response in a parsable format.");
+      e.printStackTrace();
+      throw e;
+    }
+    return obj;
+  }
+
+  public static Response sendRequestThrow(String method, String providerUrl, Object payload) {
+    Response response = sendRequest(providerUrl, method, payload);
+    final Response.StatusType statusInfo = response.getStatusInfo();
+    if (statusInfo.getFamily() != Family.SUCCESSFUL) {
+      final int statusCode = statusInfo.getStatusCode();
+        final String reasonPhrase = statusInfo.getReasonPhrase();
+        System.out.println("GOT " + statusCode + " " + reasonPhrase);
+      throw new ArrowheadException(reasonPhrase, statusCode);
+    }
+    return response;
+  }
 }

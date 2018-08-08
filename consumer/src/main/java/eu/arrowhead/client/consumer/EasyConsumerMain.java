@@ -100,7 +100,7 @@ public class EasyConsumerMain extends ArrowheadConsumer {
       from the Orchestrator are parsed this way.
      */
     try {
-      readout = requestEntity("GET", providerUrl, null, TemperatureReadout.class);
+      readout = Utility.requestEntity("GET", providerUrl, null, TemperatureReadout.class);
       System.out.println("Provider Response payload: " + Utility.toPrettyJson(null, readout));
     } catch (RuntimeException ignored) {
     }
