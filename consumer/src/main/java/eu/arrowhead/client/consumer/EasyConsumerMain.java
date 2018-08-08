@@ -11,6 +11,7 @@ package eu.arrowhead.client.consumer;
 
 import eu.arrowhead.client.common.can_be_modified.model.TemperatureReadout;
 import eu.arrowhead.client.common.no_need_to_modify.ArrowheadConsumer;
+import eu.arrowhead.client.common.no_need_to_modify.Orchestrator;
 import eu.arrowhead.client.common.no_need_to_modify.Utility;
 import eu.arrowhead.client.common.no_need_to_modify.model.ArrowheadService;
 import eu.arrowhead.client.common.no_need_to_modify.model.ServiceRequestForm;
@@ -33,7 +34,8 @@ public class EasyConsumerMain extends ArrowheadConsumer {
     ServiceRequestForm srf = compileSRF();
 
     // Sending the orchestration request and parsing the response
-    String providerUrl = sendOrchestrationRequest(srf);
+    final Orchestrator orchestrator = new Orchestrator(isSecure);
+    String providerUrl = orchestrator.sendOrchestrationRequest(srf).toString();
 
     // Connect to the provider, consuming its service
     consumeService(providerUrl);
