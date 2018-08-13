@@ -1,5 +1,6 @@
 package eu.arrowhead.client.common.no_need_to_modify;
 
+import eu.arrowhead.client.common.no_need_to_modify.misc.SecurityUtils;
 import eu.arrowhead.client.common.no_need_to_modify.misc.TypeSafeProperties;
 import eu.arrowhead.client.common.no_need_to_modify.model.ArrowheadService;
 import eu.arrowhead.client.common.no_need_to_modify.model.ArrowheadSystem;
@@ -7,6 +8,9 @@ import eu.arrowhead.client.common.no_need_to_modify.model.ServiceRequestForm;
 import org.glassfish.jersey.SslConfigurator;
 
 import javax.net.ssl.SSLContext;
+import java.security.KeyStore;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Map;
 
 public abstract class ArrowheadConsumer {
@@ -25,12 +29,19 @@ public abstract class ArrowheadConsumer {
         }
 
         if (isSecure) {
+            final String keystorePath = props.getProperty("keystore");
+            final String keystorePass = props.getProperty("keystorepass");
             SslConfigurator sslConfig = SslConfigurator.newInstance().trustStoreFile(props.getProperty("truststore"))
                     .trustStorePassword(props.getProperty("truststorepass"))
-                    .keyStoreFile(props.getProperty("keystore")).keyStorePassword(props.getProperty("keystorepass"))
+                    .keyStoreFile(keystorePath).keyStorePassword(keystorePass)
                     .keyPassword(props.getProperty("keypass"));
             SSLContext sslContext = sslConfig.createSSLContext();
             Utility.setSSLContext(sslContext);
+
+            KeyStore keyStore = SecurityUtils.loadKeyStore(keystorePath, keystorePass);
+            X509Certificate serverCert = SecurityUtils.getFirstCertFromKeyStore(keyStore);
+            String base64PublicKey = Base64.getEncoder().encodeToString(serverCert.getPublicKey().getEncoded());
+            System.out.println("Client PublicKey Base64: " + base64PublicKey);
         }
 
 
